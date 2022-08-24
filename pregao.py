@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import ttk
 from tkcalendar import DateEntry, Calendar
+from time import strftime
 
 ################# cores ###############
 
@@ -20,6 +21,13 @@ cor10 = "#336688"  # azul -
 app = Tk()
 app.title('Pregão')
 app.geometry('810x535')
+
+# Funções
+######## Rélogio########
+def time(): 
+    string = strftime('%H:%M:%S') 
+    lbl.config(text = string) 
+    lbl.after(1000, time) 
 
 # Frames
 f1 = Frame(app, width=810, height=135, relief='flat', bg=cor10)
@@ -106,7 +114,13 @@ for _ in range(50):
 
 # Calendário
 cal = Calendar(fld)
-cal.place(x=5, y=0)
+cal.place(x=5, y=55)
 
+# Rélogio
+lbl = Label(fld, font = ('calibri', 30, 'bold'), 
+            background = cor0, 
+            foreground = cor7) 
+lbl.place(x=120, y=20, anchor = 'center') 
 
+time() 
 app.mainloop()
