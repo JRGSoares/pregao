@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import ttk
 from tkcalendar import DateEntry, Calendar
+from PIL import ImageTk, Image
 from time import strftime
 
 ################# cores ###############
@@ -121,6 +122,11 @@ lbl = Label(fld, font = ('calibri', 30, 'bold'),
             background = cor0, 
             foreground = cor7) 
 lbl.place(x=120, y=20, anchor = 'center') 
+
+# Logo
+img = ImageTk.PhotoImage(Image.open("caixa.png"))  
+l=Label(fld, image=img, bg=cor10)
+l.place(x=5, y=245)
 
 time() 
 app.mainloop()
