@@ -1,8 +1,13 @@
 from tkinter import *
 from tkinter import ttk
+from tkinter import messagebox
 from tkcalendar import DateEntry, Calendar
 from PIL import ImageTk, Image
 from time import strftime
+#from model import *
+import sqlite3 as lite
+
+con = lite.connect('database.db')
 
 ################# cores ###############
 
@@ -29,6 +34,63 @@ def time():
     string = strftime('%H:%M:%S') 
     lbl.config(text = string) 
     lbl.after(1000, time) 
+
+# Listar
+def listar():
+    total_soma = []
+    with con:
+        cursor = con.cursor()
+        query = cursor.execute("SELECT * FROM dividas")
+        itens = query.fetchall()
+        for item in itens:
+            #formatando strings
+            val = '%.2f' %item[4]
+            nome = f'{item[1]}'.upper()[:1] + f'{item[1]}'.lower()[1:]
+            descricao = f'{item[2]}'.upper()[:1] + f'{item[2]}'.lower()[1:]
+
+            #inserindo dados
+            tree.insert('', 0, values=(nome, descricao, item[3], f'R$ {val}'.replace('.',',')))
+            total_soma.append(float(item[4]))
+            
+    tf = sum(total_soma)
+    tp = '%.2f' %tf
+    total.set(f'R$ {tp}'.replace('.',','))
+
+def inserir():
+    nome = e_nome.get()
+    descricao = e_descricao.get()
+    data = e_data.get_date()
+    valor = e_valor.get().replace(',','.')
+    
+    try:
+        valor = float(valor)
+    except:
+        messagebox.showinfo(title='Dados Invalidos.', message='Valor recebe apenas numero.')
+        return
+
+    try:
+        if nome == '' or descricao == '' or data == '' or valor == '':
+            messagebox.showinfo(title='Dados Invalidos.', message='Favor preencher todos os campos.')
+        elif type(nome) != type(''):
+            messagebox.showinfo(title='Dados Invalidos.', message='Campo nome recebe apenas letras.')
+
+        else:
+            i = (nome, descricao, data, valor)
+            with con:
+                cursor = con.cursor()
+                query = "INSERT INTO dividas(nome, descricao, data, valor) VALUES(?,?,?,?)"
+                cursor.execute(query, i)
+            e_nome.delete(0, 'end')
+            e_descricao.delete(0, 'end')
+            e_valor.delete(0, 'end')
+
+            e_nome.focus()
+            messagebox.showinfo(title='Sucesso.', message='Dados cadastrados com sucesso.')
+            tree.delete(*tree.get_children())
+            listar()
+    
+    except:
+        ...
 
 # Frames
 f1 = Frame(app, width=810, height=135, relief='flat', bg=cor10)
@@ -73,15 +135,16 @@ lpesquisar.place(x=145, y=20)
 e_pesquisar.place(x=615, y=45)
 
 # Painel
+total = StringVar()
 texto= Label(fp,text='Total', width=19, height=1, bg=cor2, fg=cor0, font=('Ivy 12 bold'))
 texto.place(x=-10, y=0)
-painel = Label(fp,text='R$ 0,00', width=10, height=1, bg=cor2, fg=cor0, font=('Ivy 20 bold'))
+painel = Label(fp,textvariable=total, width=10, height=1, bg=cor2, fg=cor0, font=('Ivy 20 bold'))
 painel.place(x=0, y=25)
 
 # Botões
 b0 = Button(f1, text='Confirmar', width=10, height=1, bg=cor2)
 b0.place(x=265, y=102)
-b1 = Button(fd, text='Cadastrar', width=10, height=1)
+b1 = Button(fd, text='Cadastrar', width=10, height=1, command=inserir)
 b1.place(x=0, y=10)
 b2 = Button(fd, text='Atualizar', width=10, height=1)
 b2.place(x=0, y=50)
@@ -110,23 +173,23 @@ vs.grid(column=1, row=0, sticky='ns')
 
 tree.grid(column=0, row=0, sticky='ns')
 
-for _ in range(50):
-    tree.insert('', 'end', values=('João da Barraca', 'materiais de limpeza', '24/08/2022', 'R$ 50,00'))
-
 # Calendário
 cal = Calendar(fld)
 cal.place(x=5, y=55)
 
 # Rélogio
-lbl = Label(fld, font = ('calibri', 30, 'bold'), 
-            background = cor0, 
-            foreground = cor7) 
+lbl = Label(fld, font = ('calibri', 30, 'bold'), bg = cor0, fg = cor7) 
 lbl.place(x=120, y=20, anchor = 'center') 
 
 # Logo
 img = ImageTk.PhotoImage(Image.open("caixa.png"))  
 l=Label(fld, image=img, bg=cor10)
-l.place(x=5, y=245)
+l.place(x=5, y=230)
+
+# Autor
+al = Label(fld, text='by ricardoguita86@gmail.com', bg=cor10, fg=cor1, font=('Ivy 12 bold'))
+al.place(x=0,y=370)
 
 time() 
+listar()
 app.mainloop()
