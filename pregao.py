@@ -48,8 +48,15 @@ def listar():
             nome = f'{item[1]}'.upper()[:1] + f'{item[1]}'.lower()[1:]
             descricao = f'{item[2]}'.upper()[:1] + f'{item[2]}'.lower()[1:]
 
+            ano = item[3][:4]
+            mes = item[3][5:7]
+            dia = item[3][8:10]
+            
+            data = dia+'/'+mes+'/'+ano
+
+
             #inserindo dados
-            tree.insert('', 0, values=(nome, descricao, item[3], f'R$ {val}'.replace('.',',')))
+            tree.insert('', 0, values=(nome, descricao, data, f'R$ {val}'.replace('.',',')))
             total_soma.append(float(item[4]))
             
     tf = sum(total_soma)
@@ -61,18 +68,16 @@ def inserir():
     descricao = e_descricao.get()
     data = e_data.get_date()
     valor = e_valor.get().replace(',','.')
-    
-    try:
-        valor = float(valor)
-    except:
-        messagebox.showinfo(title='Dados Invalidos.', message='Valor recebe apenas numero.')
-        return
 
     try:
         if nome == '' or descricao == '' or data == '' or valor == '':
             messagebox.showinfo(title='Dados Invalidos.', message='Favor preencher todos os campos.')
-        elif type(nome) != type(''):
-            messagebox.showinfo(title='Dados Invalidos.', message='Campo nome recebe apenas letras.')
+            return
+        try:
+            valor = float(valor)
+        except:
+            messagebox.showinfo(title='Dados Invalidos.', message='Valor recebe apenas numero.')
+            return
 
         else:
             i = (nome, descricao, data, valor)
@@ -85,12 +90,12 @@ def inserir():
             e_valor.delete(0, 'end')
 
             e_nome.focus()
-            messagebox.showinfo(title='Sucesso.', message='Dados cadastrados com sucesso.')
+            messagebox.showinfo(title='Sucesso', message='Dados cadastrados com sucesso')
             tree.delete(*tree.get_children())
             listar()
     
     except:
-        ...
+        messagebox.showinfo(title='Erro', message='Erro ao cadastrar, nenhum dado foi inserido')
 
 # Frames
 f1 = Frame(app, width=810, height=135, relief='flat', bg=cor10)
@@ -98,8 +103,8 @@ f1.place(x=0, y=0)
 
 fe = Frame(f1, width=260, height=135, relief='flat', bg=cor2)
 fe.place(x=0, y=0)
-fp = Frame(f1, width=150, height=75, relief='flat', bg=cor5)
-fp.place(x=290, y=10)
+fp = Frame(f1, width=190, height=75, relief='flat', bg=cor5)
+fp.place(x=270, y=10)
 fd = Frame(f1, width=330, height=135, relief='flat', bg=cor10)
 fd.place(x=470, y=0)
 
@@ -136,9 +141,9 @@ e_pesquisar.place(x=615, y=45)
 
 # Painel
 total = StringVar()
-texto= Label(fp,text='Total', width=19, height=1, bg=cor2, fg=cor0, font=('Ivy 12 bold'))
+texto= Label(fp,text='Total', width=22, height=1, bg=cor2, fg=cor0, font=('Ivy 12 bold'))
 texto.place(x=-10, y=0)
-painel = Label(fp,textvariable=total, width=10, height=1, bg=cor2, fg=cor0, font=('Ivy 20 bold'))
+painel = Label(fp,textvariable=total, width=13, height=1, bg=cor2, fg=cor0, font=('Ivy 20 bold'))
 painel.place(x=0, y=25)
 
 # Botões
