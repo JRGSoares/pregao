@@ -4,10 +4,7 @@ from tkinter import messagebox
 from tkcalendar import DateEntry, Calendar
 from PIL import ImageTk, Image
 from time import strftime
-#from model import *
-import sqlite3 as lite
-
-con = lite.connect('database.db')
+from model import *
 
 ################# cores ###############
 
@@ -35,33 +32,27 @@ def time():
     lbl.config(text = string) 
     lbl.after(1000, time) 
 
-# Formatar Moeda
-def fm(n):
-    nf = "{:_.2f}".format(float(n)).replace('.',',').replace('_','.')
-    return nf
-
 # Listar
 def listar():
     total_soma = []
-    with con:
-        cursor = con.cursor()
-        query = cursor.execute("SELECT * FROM dividas")
-        itens = query.fetchall()
-        for item in itens:
-            #formatando strings
-            nome = f'{item[1]}'.upper()[:1] + f'{item[1]}'.lower()[1:]
-            descricao = f'{item[2]}'.upper()[:1] + f'{item[2]}'.lower()[1:]
+    
+    for item in consultar():
+        #formatando strings
+        id = item[0]
+        nome = f'{item[1]}'.upper()[:1] + f'{item[1]}'.lower()[1:]
+        descricao = f'{item[2]}'.upper()[:1] + f'{item[2]}'.lower()[1:]
 
-            ano = item[3][:4]
-            mes = item[3][5:7]
-            dia = item[3][8:10]
-            
-            data = dia+'/'+mes+'/'+ano
+        ano = item[3][:4]
+        mes = item[3][5:7]
+        dia = item[3][8:10]
+        
+        data = dia+'/'+mes+'/'+ano
 
-            #inserindo dados
-            tree.insert('', 0, values=(nome, descricao, data, f'R$ {fm(item[4])}'))
-            total_soma.append(float(item[4]))
-            
+        #inserindo dados
+        tree.insert('', 0, values=(id, nome, descricao, data, f'R$ {fm(item[4])}'))
+        total_soma.append(float(item[4]))
+
+    # Total do Painel     
     tf = sum(total_soma)
     total.set(f'R$ {fm(tf)}')
 
@@ -83,21 +74,83 @@ def inserir():
 
         else:
             i = (nome, descricao, data, valor)
-            with con:
-                cursor = con.cursor()
-                query = "INSERT INTO dividas(nome, descricao, data, valor) VALUES(?,?,?,?)"
-                cursor.execute(query, i)
+            cadastrar(i)
             e_nome.delete(0, 'end')
             e_descricao.delete(0, 'end')
             e_valor.delete(0, 'end')
 
             e_nome.focus()
-            messagebox.showinfo(title='Sucesso', message='Dados cadastrados com sucesso')
             tree.delete(*tree.get_children())
             listar()
+            #messagebox.showinfo(title='Sucesso', message='Dados cadastrados com sucesso')
     
     except:
         messagebox.showinfo(title='Erro', message='Erro ao cadastrar, nenhum dado foi inserido')
+
+def atualizar():
+    global b0,id
+
+    nome = e_nome.get()
+    descricao = e_descricao.get()
+    data = e_data.get_date()
+    valor = e_valor.get().replace(',','.')
+
+    i = (nome, descricao, data, valor,id)
+
+    atualizar_form(i)
+    e_nome.delete(0, 'end')
+    e_descricao.delete(0, 'end')
+    e_valor.delete(0, 'end')
+
+    e_nome.focus()
+    messagebox.showinfo(title='Sucesso', message='Dados atualizado com sucesso')
+    tree.delete(*tree.get_children())
+    listar()
+    b0.destroy()
+
+def confirmar():
+    global b0, id
+
+    try:
+        selacao = tree.selection()
+        item = tree.item(selacao[0])
+
+        id = item['values'][0]
+        e_nome.delete(0, 'end')
+        e_descricao.delete(0, 'end')
+        e_data.delete(0, 'end')
+        e_valor.delete(0, 'end')
+
+        e_nome.insert(0, item['values'][1])
+        e_descricao.insert(0, item['values'][2])
+        e_data.insert(0, item['values'][3])
+        e_valor.insert(0, f"{item['values'][4]}".replace('R$ ','').replace('.','').replace(',','.').replace('.',','))
+
+        b0 = Button(f1, text='Confirmar', width=10, height=1, bg=cor2, command=atualizar)
+        b0.place(x=265, y=102)
+
+    except:
+        messagebox.showinfo(title='Aviso', message='Favor selecionar um item')
+
+def excluir():
+    try:
+        selacao = tree.selection()
+        item = tree.item(selacao[0])
+        id = item['values'][0]
+        nome = item['values'][1]
+
+        confirm = messagebox.askyesno(title='Aviso', message=f'Tem certeza que deseja excluir {nome}?')
+
+        if confirm:
+            deletar([id])
+            e_nome.focus()
+            messagebox.showinfo(title='Sucesso', message='Item excluido com sucesso')
+            tree.delete(*tree.get_children())
+            listar()
+        else:
+            return
+    except:
+        messagebox.showinfo(title='Aviso', message='Favor selecionar um item')
 
 # Frames
 f1 = Frame(app, width=810, height=135, relief='flat', bg=cor10)
@@ -149,26 +202,26 @@ painel = Label(fp,textvariable=total, width=13, height=1, bg=cor2, fg=cor0, font
 painel.place(x=0, y=25)
 
 # Botões
-b0 = Button(f1, text='Confirmar', width=10, height=1, bg=cor2)
-b0.place(x=265, y=102)
 b1 = Button(fd, text='Cadastrar', width=10, height=1, command=inserir)
 b1.place(x=0, y=10)
-b2 = Button(fd, text='Atualizar', width=10, height=1)
+b2 = Button(fd, text='Atualizar', width=10, height=1, command=confirmar)
 b2.place(x=0, y=50)
-b3 = Button(fd, text='Deletar', width=10, height=1)
+b3 = Button(fd, text='Deletar', width=10, height=1, command=excluir)
 b3.place(x=0, y=90)
 b4 = Button(fd, text='Pesquisar', width=10, height=1)
 b4.place(x=170, y=80)
 
 # Tree
-cols = ('nome', 'descricao', 'data', 'valor')
+cols = ('id', 'nome', 'descricao', 'data', 'valor')
 tree = ttk.Treeview(fle, columns=cols, show='headings', height=18)
 
-tree.column('nome', minwidth=0, width=150)
+tree.column('id', minwidth=0, width=50)
+tree.column('nome', minwidth=0, width=120)
 tree.column('descricao', minwidth=0, width=210)
-tree.column('data', minwidth=0, width=90)
+tree.column('data', minwidth=0, width=80)
 tree.column('valor', minwidth=0, width=80)
 
+tree.heading('id', text='Cod.')
 tree.heading('nome', text='Nome')
 tree.heading('descricao', text='Descrição')
 tree.heading('data', text='Data')
