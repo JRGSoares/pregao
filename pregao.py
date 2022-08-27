@@ -69,7 +69,7 @@ def inserir():
         try:
             valor = float(valor)
         except:
-            messagebox.showinfo(title='Dados Invalidos.', message='Valor recebe apenas numero.')
+            messagebox.showinfo(title='Dados Invalidos.', message='campo valor recebe apenas numero.')
             return
 
         else:
@@ -82,13 +82,13 @@ def inserir():
             e_nome.focus()
             tree.delete(*tree.get_children())
             listar()
-            #messagebox.showinfo(title='Sucesso', message='Dados cadastrados com sucesso')
+            messagebox.showinfo(title='Sucesso', message='Dados cadastrados com sucesso')
     
     except:
         messagebox.showinfo(title='Erro', message='Erro ao cadastrar, nenhum dado foi inserido')
 
 def atualizar():
-    global b0,id
+    global b0, b5, id
 
     nome = e_nome.get()
     descricao = e_descricao.get()
@@ -98,18 +98,41 @@ def atualizar():
     i = (nome, descricao, data, valor,id)
 
     atualizar_form(i)
+
     e_nome.delete(0, 'end')
     e_descricao.delete(0, 'end')
     e_valor.delete(0, 'end')
 
     e_nome.focus()
-    messagebox.showinfo(title='Sucesso', message='Dados atualizado com sucesso')
     tree.delete(*tree.get_children())
     listar()
     b0.destroy()
+    b5.destroy()
+    messagebox.showinfo(title='Sucesso', message='Dados atualizado com sucesso')
+
+    b1['state'] = 'normal'
+    b2['state'] = 'normal'
+    b3['state'] = 'normal'
+    b4['state'] = 'normal'
+
+def cancelar():
+    global b0, b5
+
+    e_nome.delete(0, 'end')
+    e_descricao.delete(0, 'end')
+    e_data.delete(0, 'end')
+    e_valor.delete(0, 'end')
+
+    b1['state'] = 'normal'
+    b2['state'] = 'normal'
+    b3['state'] = 'normal'
+    b4['state'] = 'normal'
+
+    b0.destroy()
+    b5.destroy()
 
 def confirmar():
-    global b0, id
+    global b0, b5, id
 
     try:
         selacao = tree.selection()
@@ -128,6 +151,13 @@ def confirmar():
 
         b0 = Button(f1, text='Confirmar', width=10, height=1, bg=cor2, command=atualizar)
         b0.place(x=265, y=102)
+        b5 = Button(f1, text='Cancelar', width=10, height=1, bg=cor5, command=cancelar)
+        b5.place(x=367, y=102)
+
+        b1['state'] = 'disabled'
+        b2['state'] = 'disabled'
+        b3['state'] = 'disabled'
+        b4['state'] = 'disabled'
 
     except:
         messagebox.showinfo(title='Aviso', message='Favor selecionar um item')
@@ -144,9 +174,9 @@ def excluir():
         if confirm:
             deletar([id])
             e_nome.focus()
-            messagebox.showinfo(title='Sucesso', message='Item excluido com sucesso')
             tree.delete(*tree.get_children())
             listar()
+            messagebox.showinfo(title='Sucesso', message='Dados excluido com sucesso')
         else:
             return
     except:
