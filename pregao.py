@@ -35,6 +35,11 @@ def time():
     lbl.config(text = string) 
     lbl.after(1000, time) 
 
+# Formatar Moeda
+def fm(n):
+    nf = "{:_.2f}".format(float(n)).replace('.',',').replace('_','.')
+    return nf
+
 # Listar
 def listar():
     total_soma = []
@@ -44,7 +49,6 @@ def listar():
         itens = query.fetchall()
         for item in itens:
             #formatando strings
-            val = '%.2f' %item[4]
             nome = f'{item[1]}'.upper()[:1] + f'{item[1]}'.lower()[1:]
             descricao = f'{item[2]}'.upper()[:1] + f'{item[2]}'.lower()[1:]
 
@@ -54,14 +58,12 @@ def listar():
             
             data = dia+'/'+mes+'/'+ano
 
-
             #inserindo dados
-            tree.insert('', 0, values=(nome, descricao, data, f'R$ {val}'.replace('.',',')))
+            tree.insert('', 0, values=(nome, descricao, data, f'R$ {fm(item[4])}'))
             total_soma.append(float(item[4]))
             
     tf = sum(total_soma)
-    tp = '%.2f' %tf
-    total.set(f'R$ {tp}'.replace('.',','))
+    total.set(f'R$ {fm(tf)}')
 
 def inserir():
     nome = e_nome.get()
