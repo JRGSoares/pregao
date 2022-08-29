@@ -95,25 +95,38 @@ def atualizar():
     data = e_data.get_date()
     valor = e_valor.get().replace(',','.')
 
-    i = (nome, descricao, data, valor,id)
+    try:
+        if nome == '' or descricao == '' or data == '' or valor == '':
+            messagebox.showinfo(title='Dados Invalidos.', message='Favor preencher todos os campos.')
+            return
+        try:
+            valor = float(valor)
+        except:
+            messagebox.showinfo(title='Dados Invalidos.', message='campo valor recebe apenas numero.')
+            return
 
-    atualizar_form(i)
+        else:
+            i = (nome, descricao, data, valor,id)
 
-    e_nome.delete(0, 'end')
-    e_descricao.delete(0, 'end')
-    e_valor.delete(0, 'end')
+            atualizar_form(i)
 
-    e_nome.focus()
-    tree.delete(*tree.get_children())
-    listar()
-    b0.destroy()
-    b5.destroy()
-    messagebox.showinfo(title='Sucesso', message='Dados atualizado com sucesso')
+            e_nome.delete(0, 'end')
+            e_descricao.delete(0, 'end')
+            e_valor.delete(0, 'end')
 
-    b1['state'] = 'normal'
-    b2['state'] = 'normal'
-    b3['state'] = 'normal'
-    b4['state'] = 'normal'
+            e_nome.focus()
+            tree.delete(*tree.get_children())
+            listar()
+            b0.destroy()
+            b5.destroy()
+            messagebox.showinfo(title='Sucesso', message='Dados atualizado com sucesso')
+
+            b1['state'] = 'normal'
+            b2['state'] = 'normal'
+            b3['state'] = 'normal'
+            b4['state'] = 'normal'
+    except:
+        messagebox.showinfo(title='Erro', message='Erro ao atualizar, nenhum dado foi atualizado')
 
 def cancelar():
     global b0, b5
