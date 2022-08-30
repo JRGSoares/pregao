@@ -12,13 +12,9 @@ cor0 = "#2e2d2b"  # Preta
 cor1 = "#feffff"  # branca
 cor2 = "#4fa882"  # verde
 cor3 = "#38576b"  # valor
-cor4 = "#403d3d"   # letra
-cor5 = "#e06636"   # - profit
-cor6 = "#038cfc"   # azul
-cor7 = "#3fbfb9"   # verde
-cor8 = "#263238"   # + verde
-cor9 = "#e9edf5"   # + verde
-cor10 = "#336688"  # azul -
+cor4 = "#e06636"   # - profit
+cor5 = "#3fbfb9"   # verde
+cor6 = "#336688"  # azul -
 
 ######################### Configuração da Janela #########################
 
@@ -164,7 +160,7 @@ def confirmar():
 
         b0 = Button(f1, text='Confirmar', width=10, height=1, bg=cor2, command=atualizar)
         b0.place(x=265, y=102)
-        b5 = Button(f1, text='Cancelar', width=10, height=1, bg=cor5, command=cancelar)
+        b5 = Button(f1, text='Cancelar', width=10, height=1, bg=cor4, command=cancelar)
         b5.place(x=367, y=102)
 
         b1['state'] = 'disabled'
@@ -273,12 +269,12 @@ def check(e):
         e_pesquisar.place(x=615, y=55)
     elif e == 2:
         e_pesquisar.destroy()
-        p_data = DateEntry(background=cor5)
+        p_data = DateEntry(background=cor4)
         p_data.place(x=615, y=55)
 
 #########################  Frame de cima ######################### 
 
-f1 = Frame(app, width=810, height=135, relief='flat', bg=cor10)
+f1 = Frame(app, width=810, height=135, relief='flat', bg=cor6)
 f1.place(x=0, y=0)
 
 # Frame esquerdo / Entradas
@@ -286,11 +282,11 @@ fe = Frame(f1, width=260, height=135, relief='flat', bg=cor2)
 fe.place(x=0, y=0)
 
 # Frame centro / Painel
-fp = Frame(f1, width=190, height=75, relief='flat', bg=cor5)
+fp = Frame(f1, width=190, height=75, relief='flat', bg=cor4)
 fp.place(x=270, y=10)
 
 # Frame direito / Botões
-fd = Frame(f1, width=330, height=135, relief='flat', bg=cor10)
+fd = Frame(f1, width=330, height=135, relief='flat', bg=cor6)
 fd.place(x=470, y=0)
 
 #########################  Frame de baixo ######################### 
@@ -299,11 +295,11 @@ f2 = Frame(app, width=810, height=400, relief='flat', bg=cor3)
 f2.place(x=0, y=135)
 
 # Frame esquerdo / TreeView
-fle = Frame(f2, width=400, height=900, relief='flat', bg=cor10)
+fle = Frame(f2, width=400, height=900, relief='flat', bg=cor6)
 fle.place(x=10, y=10)
 
 # Frame direito / Calendario, Rélogio, Logo e Author
-fld = Frame(f2, width=245, height=900, relief='flat', bg=cor10)
+fld = Frame(f2, width=245, height=900, relief='flat', bg=cor6)
 fld.place(x=565, y=0)
 
 ######################### Entrada #########################
@@ -322,7 +318,7 @@ e_descricao.place(x=100, y=40)
 
 # Data
 ldata = Label(fe, text='Data:', bg=cor2) 
-e_data = DateEntry(fe, background=cor5)
+e_data = DateEntry(fe, background=cor4)
 ldata.place(x=20, y=70)
 e_data.place(x=100, y=70)
 
@@ -333,21 +329,21 @@ lvalor.place(x=20, y=100)
 e_valor.place(x=100, y=100)
 
 # Pesquisar
-lpesquisar = Label(fd, text='Pesquisar por:', bg=cor10, fg=cor1) 
+lpesquisar = Label(fd, text='Pesquisar por:', bg=cor6, fg=cor1) 
 e_pesquisar = Entry()
 lpesquisar.place(x=140, y=10)
 e_pesquisar.place(x=615, y=55)
 
 # Pesquisar Data
-p_data = DateEntry(background=cor5)
+p_data = DateEntry(background=cor4)
 
 # RadiomButtom
 escolha = IntVar()
 escolha.set(1)
 
-rb1 = Radiobutton(fd, text='Nome', bg=cor10, highlightbackground=cor10, activebackground=cor10, value=1, variable=escolha, command=lambda:check(1))
+rb1 = Radiobutton(fd, text='Nome', bg=cor6, highlightbackground=cor6, activebackground=cor6, value=1, variable=escolha, command=lambda:check(1))
 rb1.place(x=135, y=28)
-rb2 = Radiobutton(fd, text='Data', bg=cor10, highlightbackground=cor10, activebackground=cor10, value=2, variable=escolha, command=lambda:check(2))
+rb2 = Radiobutton(fd, text='Data', bg=cor6, highlightbackground=cor6, activebackground=cor6, value=2, variable=escolha, command=lambda:check(2))
 rb2.place(x=200, y=28)
 
 ######################### Painel #########################
@@ -415,16 +411,16 @@ cal = Calendar(fld, background=cor2)
 cal.place(x=5, y=55)
 
 # Rélogio
-lbl = Label(fld, font = ('calibri', 30, 'bold'), bg = cor0, fg = cor7) 
+lbl = Label(fld, font = ('calibri', 30, 'bold'), bg = cor0, fg = cor5) 
 lbl.place(x=120, y=20, anchor = 'center') 
 
 # Logo
 img = ImageTk.PhotoImage(Image.open("caixa.png"))  
-l=Label(fld, image=img, bg=cor10)
+l=Label(fld, image=img, bg=cor6)
 l.place(x=5, y=230)
 
 # Autor
-al = Label(fld, text='by ricardoguita86@gmail.com', bg=cor10, fg=cor1, font=('Ivy 12 bold'))
+al = Label(fld, text='by ricardoguita86@gmail.com', bg=cor6, fg=cor1, font=('Ivy 12 bold'))
 al.place(x=0,y=370)
 
 # Iniciando loops
