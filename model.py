@@ -15,6 +15,20 @@ def consultar(): # Retorna uma Lista
         itens = query.fetchall()
         return itens
 
+def burcar(i, e): # Retorna uma Lista
+    if i == 1:
+        with con:
+            cursor = con.cursor()
+            query = cursor.execute(f"SELECT * FROM dividas WHERE nome LIKE'%{e}%' ")
+            itens = query.fetchall()
+            return itens
+    elif i == 2:
+        with con:
+            cursor = con.cursor()
+            query = cursor.execute(f"SELECT * FROM dividas WHERE data='{e}' ")
+            itens = query.fetchall()
+            return itens
+
 def atualizar_form(i): # Recebe uma Tupla como parâmetro
     with con:
         cursor = con.cursor()

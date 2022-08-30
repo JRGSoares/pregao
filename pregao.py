@@ -80,7 +80,7 @@ def inserir():
             e_valor.delete(0, 'end')
 
             e_nome.focus()
-            tree.delete(*tree.get_children())
+            tree.delete(*tree.get_children()) # Limpa a treeview
             listar()
             messagebox.showinfo(title='Sucesso', message='Dados cadastrados com sucesso')
     
@@ -196,7 +196,77 @@ def excluir():
         messagebox.showinfo(title='Aviso', message='Favor selecionar um item')
 
 def pesquizar():
-    ...
+    global escolha, e_pesquisar, p_data
+
+    if escolha.get() == 1:
+        nome = e_pesquisar.get()
+        resultado = burcar(1, nome)
+
+        tree.delete(*tree.get_children())
+
+        total_soma = []
+    
+        for item in resultado:
+            #formatando strings
+            id = item[0]
+            nome = f'{item[1]}'.upper()[:1] + f'{item[1]}'.lower()[1:]
+            descricao = f'{item[2]}'.upper()[:1] + f'{item[2]}'.lower()[1:]
+
+            ano = item[3][:4]
+            mes = item[3][5:7]
+            dia = item[3][8:10]
+            
+            data = dia+'/'+mes+'/'+ano
+
+            #inserindo dados
+            tree.insert('', 0, values=(id, nome, descricao, data, f'R$ {fm(item[4])}'))
+            total_soma.append(float(item[4]))
+
+        # Total do Painel     
+        tf = sum(total_soma)
+        total.set(f'R$ {fm(tf)}')
+
+
+    elif escolha.get() == 2:
+        data = p_data.get_date()
+        resultado = burcar(2, data)
+        
+        tree.delete(*tree.get_children())
+
+        total_soma = []
+    
+        for item in resultado:
+            #formatando strings
+            id = item[0]
+            nome = f'{item[1]}'.upper()[:1] + f'{item[1]}'.lower()[1:]
+            descricao = f'{item[2]}'.upper()[:1] + f'{item[2]}'.lower()[1:]
+
+            ano = item[3][:4]
+            mes = item[3][5:7]
+            dia = item[3][8:10]
+            
+            data = dia+'/'+mes+'/'+ano
+
+            #inserindo dados
+            tree.insert('', 0, values=(id, nome, descricao, data, f'R$ {fm(item[4])}'))
+            total_soma.append(float(item[4]))
+
+        # Total do Painel     
+        tf = sum(total_soma)
+        total.set(f'R$ {fm(tf)}')
+
+def check(e):
+    global e_pesquisar, p_data
+
+    if e == 1:
+        p_data.destroy()
+        e_pesquisar.destroy()
+        e_pesquisar = Entry()
+        e_pesquisar.place(x=615, y=55)
+    elif e == 2:
+        e_pesquisar.destroy()
+        p_data = DateEntry(background=cor5)
+        p_data.place(x=615, y=55)
 
 #########################  Frame de cima ######################### 
 
@@ -244,7 +314,7 @@ e_descricao.place(x=100, y=40)
 
 # Data
 ldata = Label(fe, text='Data:', bg=cor2) 
-e_data = DateEntry(fe)
+e_data = DateEntry(fe, background=cor5)
 ldata.place(x=20, y=70)
 e_data.place(x=100, y=70)
 
@@ -255,10 +325,22 @@ lvalor.place(x=20, y=100)
 e_valor.place(x=100, y=100)
 
 # Pesquisar
-lpesquisar = Label(fd, text='Pesquisar por nome:', bg=cor10, fg=cor1) 
+lpesquisar = Label(fd, text='Pesquisar por:', bg=cor10, fg=cor1) 
 e_pesquisar = Entry()
-lpesquisar.place(x=145, y=20)
-e_pesquisar.place(x=615, y=45)
+lpesquisar.place(x=140, y=10)
+e_pesquisar.place(x=615, y=55)
+
+# Pesquisar Data
+p_data = DateEntry()
+
+# RadiomButtom
+escolha = IntVar()
+escolha.set(1)
+
+rb1 = Radiobutton(fd, text='Nome', bg=cor10, highlightbackground=cor10, activebackground=cor10, value=1, variable=escolha, command=lambda:check(1))
+rb1.place(x=135, y=28)
+rb2 = Radiobutton(fd, text='Data', bg=cor10, highlightbackground=cor10, activebackground=cor10, value=2, variable=escolha, command=lambda:check(2))
+rb2.place(x=200, y=28)
 
 ######################### Painel #########################
 
@@ -287,8 +369,8 @@ b3 = Button(fd, text='Deletar', width=10, height=1, command=excluir)
 b3.place(x=0, y=90)
 
 # Botão Pesquisar
-b4 = Button(fd, text='Pesquisar', width=10, height=1) 
-b4.place(x=170, y=80)
+b4 = Button(fd, text='Pesquisar', width=10, height=1, command=pesquizar) 
+b4.place(x=170, y=90)
 
 ######################### TreeView #########################
 
@@ -321,7 +403,7 @@ tree.grid(column=0, row=0, sticky='ns')
 vs.grid(column=1, row=0, sticky='ns')
 
 # Calendário
-cal = Calendar(fld)
+cal = Calendar(fld, background=cor2)
 cal.place(x=5, y=55)
 
 # Rélogio
