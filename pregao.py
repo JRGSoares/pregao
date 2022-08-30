@@ -202,6 +202,10 @@ def pesquizar():
         nome = e_pesquisar.get()
         resultado = burcar(1, nome)
 
+        if len(resultado) == 0:
+            messagebox.showinfo(title='Resultado', message='Resultado não encontrado')
+            return
+
         tree.delete(*tree.get_children())
 
         total_soma = []
@@ -230,6 +234,10 @@ def pesquizar():
     elif escolha.get() == 2:
         data = p_data.get_date()
         resultado = burcar(2, data)
+
+        if len(resultado) == 0:
+            messagebox.showinfo(title='Resultado', message='Resultado não encontrado')
+            return
         
         tree.delete(*tree.get_children())
 
@@ -331,7 +339,7 @@ lpesquisar.place(x=140, y=10)
 e_pesquisar.place(x=615, y=55)
 
 # Pesquisar Data
-p_data = DateEntry()
+p_data = DateEntry(background=cor5)
 
 # RadiomButtom
 escolha = IntVar()
