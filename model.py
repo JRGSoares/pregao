@@ -11,7 +11,7 @@ def cadastrar(i): # Recebe uma Tupla como parâmetro
 def consultar(): # Retorna uma Lista
     with con:
         cursor = con.cursor()
-        query = cursor.execute("SELECT * FROM dividas")
+        query = cursor.execute("SELECT * FROM dividas ORDER BY data")
         itens = query.fetchall()
         return itens
 
@@ -19,13 +19,13 @@ def burcar(i, e): # Retorna uma Lista
     if i == 1:
         with con:
             cursor = con.cursor()
-            query = cursor.execute(f"SELECT * FROM dividas WHERE nome LIKE'%{e}%' ")
+            query = cursor.execute(f"SELECT * FROM dividas WHERE nome LIKE'%{e}%' ORDER BY data ")
             itens = query.fetchall()
             return itens
     elif i == 2:
         with con:
             cursor = con.cursor()
-            query = cursor.execute(f"SELECT * FROM dividas WHERE data='{e}' ")
+            query = cursor.execute(f"SELECT * FROM dividas WHERE data='{e}' ORDER BY data ")
             itens = query.fetchall()
             return itens
 

@@ -21,6 +21,7 @@ cor6 = "#336688"  # azul -
 app = Tk()
 app.title('Pregão')
 app.geometry('810x535')
+app.resizable(False, False)
 
 ######################### Funções #########################
 
@@ -346,7 +347,7 @@ rb1.place(x=135, y=28)
 rb2 = Radiobutton(fd, text='Data', bg=cor6, highlightbackground=cor6, activebackground=cor6, value=2, variable=escolha, command=lambda:check(2))
 rb2.place(x=200, y=28)
 
-######################### Painel #########################
+######################### Painel Total #########################
 
 total = StringVar()
 
@@ -405,6 +406,8 @@ tree.configure(yscroll = vs.set)
 # Mostrar treeview e scrollbar
 tree.grid(column=0, row=0, sticky='ns')
 vs.grid(column=1, row=0, sticky='ns')
+
+######################### Painel Direito #########################
 
 # Calendário
 cal = Calendar(fld, background=cor2)
