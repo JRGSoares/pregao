@@ -192,73 +192,55 @@ def excluir():
     except:
         messagebox.showinfo(title='Aviso', message='Favor selecionar um item')
 
+def resultado_pesquisa(i):
+
+    resultado = i
+
+    if len(resultado) == 0:
+            messagebox.showinfo(title='Resultado', message='Resultado não encontrado')
+            return
+
+    tree.delete(*tree.get_children())
+
+    total_soma = []
+
+    for item in resultado:
+        #formatando strings
+        id = item[0]
+        nome = f'{item[1]}'.upper()[:1] + f'{item[1]}'.lower()[1:]
+        descricao = f'{item[2]}'.upper()[:1] + f'{item[2]}'.lower()[1:]
+
+        ano = item[3][:4]
+        mes = item[3][5:7]
+        dia = item[3][8:10]
+        
+        data = dia+'/'+mes+'/'+ano
+
+        #inserindo dados
+        tree.insert('', 0, values=(id, nome, descricao, data, f'R$ {fm(item[4])}'))
+        total_soma.append(float(item[4]))
+
+    # Total do Painel     
+    tf = sum(total_soma)
+    total.set(f'R$ {fm(tf)}')
+
 def pesquizar():
     global escolha, e_pesquisar, p_data
 
     if escolha.get() == 1:
         nome = e_pesquisar.get()
         resultado = burcar(1, nome)
-
-        if len(resultado) == 0:
-            messagebox.showinfo(title='Resultado', message='Resultado não encontrado')
-            return
-
-        tree.delete(*tree.get_children())
-
-        total_soma = []
-    
-        for item in resultado:
-            #formatando strings
-            id = item[0]
-            nome = f'{item[1]}'.upper()[:1] + f'{item[1]}'.lower()[1:]
-            descricao = f'{item[2]}'.upper()[:1] + f'{item[2]}'.lower()[1:]
-
-            ano = item[3][:4]
-            mes = item[3][5:7]
-            dia = item[3][8:10]
-            
-            data = dia+'/'+mes+'/'+ano
-
-            #inserindo dados
-            tree.insert('', 0, values=(id, nome, descricao, data, f'R$ {fm(item[4])}'))
-            total_soma.append(float(item[4]))
-
-        # Total do Painel     
-        tf = sum(total_soma)
-        total.set(f'R$ {fm(tf)}')
-
+        resultado_pesquisa(resultado)
 
     elif escolha.get() == 2:
-        data = p_data.get_date()
+        data = e_pesquisar.get()
         resultado = burcar(2, data)
+        resultado_pesquisa(resultado)
 
-        if len(resultado) == 0:
-            messagebox.showinfo(title='Resultado', message='Resultado não encontrado')
-            return
-        
-        tree.delete(*tree.get_children())
-
-        total_soma = []
-    
-        for item in resultado:
-            #formatando strings
-            id = item[0]
-            nome = f'{item[1]}'.upper()[:1] + f'{item[1]}'.lower()[1:]
-            descricao = f'{item[2]}'.upper()[:1] + f'{item[2]}'.lower()[1:]
-
-            ano = item[3][:4]
-            mes = item[3][5:7]
-            dia = item[3][8:10]
-            
-            data = dia+'/'+mes+'/'+ano
-
-            #inserindo dados
-            tree.insert('', 0, values=(id, nome, descricao, data, f'R$ {fm(item[4])}'))
-            total_soma.append(float(item[4]))
-
-        # Total do Painel     
-        tf = sum(total_soma)
-        total.set(f'R$ {fm(tf)}')
+    elif escolha.get() == 3:
+        data = p_data.get_date()
+        resultado = burcar(3, data)
+        resultado_pesquisa(resultado)
 
 def check(e):
     global e_pesquisar, p_data
@@ -268,7 +250,14 @@ def check(e):
         e_pesquisar.destroy()
         e_pesquisar = Entry()
         e_pesquisar.place(x=615, y=55)
+
     elif e == 2:
+        p_data.destroy()
+        e_pesquisar.destroy()
+        e_pesquisar = Entry()
+        e_pesquisar.place(x=615, y=55)
+
+    elif e == 3:
         e_pesquisar.destroy()
         p_data = DateEntry(background=cor4)
         p_data.place(x=615, y=55)
@@ -343,9 +332,11 @@ escolha = IntVar()
 escolha.set(1)
 
 rb1 = Radiobutton(fd, text='Nome', bg=cor6, highlightbackground=cor6, activebackground=cor6, value=1, variable=escolha, command=lambda:check(1))
-rb1.place(x=135, y=28)
-rb2 = Radiobutton(fd, text='Data', bg=cor6, highlightbackground=cor6, activebackground=cor6, value=2, variable=escolha, command=lambda:check(2))
-rb2.place(x=200, y=28)
+rb1.place(x=110, y=28)
+rb2 = Radiobutton(fd, text='Descrição', bg=cor6, highlightbackground=cor6, activebackground=cor6, value=2, variable=escolha, command=lambda:check(2))
+rb2.place(x=180, y=28)
+rb3 = Radiobutton(fd, text='Data', bg=cor6, highlightbackground=cor6, activebackground=cor6, value=3, variable=escolha, command=lambda:check(3))
+rb3.place(x=265, y=28)
 
 ######################### Painel Total #########################
 

@@ -25,6 +25,12 @@ def burcar(i, e): # Retorna uma Lista
     elif i == 2:
         with con:
             cursor = con.cursor()
+            query = cursor.execute(f"SELECT * FROM dividas WHERE descricao LIKE'%{e}%' ORDER BY data ")
+            itens = query.fetchall()
+            return itens
+    elif i == 3:
+        with con:
+            cursor = con.cursor()
             query = cursor.execute(f"SELECT * FROM dividas WHERE data='{e}' ORDER BY data ")
             itens = query.fetchall()
             return itens
